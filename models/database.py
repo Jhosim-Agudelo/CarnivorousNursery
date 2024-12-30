@@ -22,7 +22,7 @@ class Database:
         name_without_spaces = plant.name.strip()
         if self.check_name(name_without_spaces):
             cursor.execute(
-                "INSERT INTO plants(name,specie,date_aquired,description) "+\
+                "INSERT INTO plants(name,specie,date_acquired,description) "+\
                 "VALUES(?,?,?,?)"
                 ,(name_without_spaces,
                   plant.specie,
@@ -47,6 +47,7 @@ class Database:
         conn = self.connect()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM plants")
+        return cursor.fetchall()
 
 
     def get_plant(self, name):
@@ -62,7 +63,7 @@ class Database:
         conn = self.connect()
         cursor = conn.cursor()
         cursor.execute(
-            "UPDATE plants SET specie = ?, date_aquired = ?, description = ? "+\
+            "UPDATE plants SET specie = ?, date_acquired = ?, description = ? "+\
                 "WHERE name = ?"
             ,(plant.specie,plant.date_aquired,plant.description,plant.name))
         conn.commit()
@@ -72,4 +73,4 @@ class Database:
         conn = self.connect()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM plants WHERE name = ?",(name,))
-        return cursor.fetchone() is not None
+        return cursor.fetchone() is None
