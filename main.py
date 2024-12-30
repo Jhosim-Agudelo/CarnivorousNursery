@@ -1,4 +1,3 @@
-from models.plant import Plant
 
 
 if __name__ == "__main__":
