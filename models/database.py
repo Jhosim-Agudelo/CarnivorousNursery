@@ -9,14 +9,21 @@ class Database:
     def add_plant(self, plant):
         conn = self.connect()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO plants(specie,date_aquired,description) VALUES(?,?,?)",(plant.specie,plant.date_aquired,plant.description))
-        conn.commit()
+
+        if self.check_name(plant.name):
+            cursor.execute(
+                "INSERT INTO plants(specie,date_aquired,description) "+\
+                "VALUES(?,?,?)"
+                ,(plant.specie,plant.date_aquired,plant.description))
+            conn.commit()
+        else:
+            print("The plant name is already in use")
         conn.close()
 
-    def delete_plant(self, plant):
+    def delete_plant(self, name):
         conn = self.connect()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM plants WHERE name = ?",(plant.name,))
+        cursor.execute("DELETE FROM plants WHERE name = ?",(name,))
         conn.commit()
         conn.close()
 
@@ -26,4 +33,24 @@ class Database:
         cursor.execute("SELECT * FROM plants")
 
 
+    def get_plant(self, name):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM plants WHERE name = ?",(name,))
+        return cursor.fetchone()
     
+    def update_plant(self, plant):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE plants SET specie = ?, date_aquired = ?, description = ? "+\
+                "WHERE name = ?"
+            ,(plant.specie,plant.date_aquired,plant.description,plant.name))
+        conn.commit()
+        conn.close()
+
+    def check_name(self, name):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM plants WHERE name = ?",(name,))
+        return cursor.fetchone() is not None
