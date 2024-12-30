@@ -72,5 +72,5 @@ class Database:
     def check_name(self, name):
         conn = self.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM plants WHERE name = ?",(name,))
+        cursor.execute("SELECT * FROM plants WHERE name = ?",(name.upper(),))
         return cursor.fetchone() is None
