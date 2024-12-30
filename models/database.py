@@ -5,22 +5,38 @@ class Database:
     
     def connect(self):
         return sqlite3.connect(self.db_path)
-    
-    def add_plant(self, plant):
+
+    def execute_query(self, query):
         conn = self.connect()
         cursor = conn.cursor()
-
-        if self.check_name(plant.name):
+        cursor.execute(query)
+        conn.commit()
+        conn.close()
+    
+    def add_plant(self, plant):
+        """
+        Adds a plant to the database
+        """
+        conn = self.connect()
+        cursor = conn.cursor()
+        name_without_spaces = plant.name.strip()
+        if self.check_name(name_without_spaces):
             cursor.execute(
-                "INSERT INTO plants(specie,date_aquired,description) "+\
-                "VALUES(?,?,?)"
-                ,(plant.specie,plant.date_aquired,plant.description))
+                "INSERT INTO plants(name,specie,date_aquired,description) "+\
+                "VALUES(?,?,?,?)"
+                ,(name_without_spaces,
+                  plant.specie,
+                  plant.date_aquired,
+                  plant.description))
             conn.commit()
         else:
             print("The plant name is already in use")
         conn.close()
 
     def delete_plant(self, name):
+        """
+        Deletes a plant from the database
+        """
         conn = self.connect()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM plants WHERE name = ?",(name,))
@@ -40,6 +56,9 @@ class Database:
         return cursor.fetchone()
     
     def update_plant(self, plant):
+        """
+        Updates a plant in the database
+        """
         conn = self.connect()
         cursor = conn.cursor()
         cursor.execute(
