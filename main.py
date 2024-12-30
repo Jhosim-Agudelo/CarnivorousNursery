@@ -15,38 +15,43 @@ def create_tables_if_needed(db):
     )
 
 def pretty_print_plant(plant):
+    print()
     print(f"Name: {plant[1]}")
     print(f"Specie: {plant[2]}")
     print(f"Date acquired: {plant[3]}")
     print(f"Description: {plant[4]}")
-
+    print()
+    
 def main():
     db = Database("data/plants.db")
     create_tables_if_needed(db)
-    print("Welcome to the plant app! (MVP)")
-    print("""Commands available: 
-                ADD <name> <specie> <date> <description>
-                DELETE <name>
-                LIST
-                EXIT""")
+    print("\nWelcome to the carnivorous Nursery! (MVP)")
+    print("\nCommands available: "
+          ,"\nADD <name> <specie> <date> <description>"
+          ,"\nDELETE <name>"
+          ,"\nLIST"
+          ,"\nEXIT\n")
 
     for line in sys.stdin:
-        command = line.strip().split()
+        parts = line.strip().split(maxsplit=4)
+        cmd = parts[0].upper()
 
-        if not command:
+        if not cmd:
             continue
 
-        if command[0] == 'EXIT':
+        if cmd == 'EXIT':
             break
-        elif command[0] == 'ADD':
-            plant = Plant(command[1],command[2],command[3],command[4])
+        elif cmd == 'ADD':
+            plant = Plant(parts[1],parts[2],parts[3],parts[4])
             db.add_plant(plant)
-        elif command[0] == 'DELETE':
-            db.delete_plant(command[1])
-        elif command[0] == 'LIST':
+        elif cmd == 'DELETE':
+            db.delete_plant(parts[1])
+        elif cmd == 'LIST':
             plants = db.get_plants()
             for plant in plants:
                 pretty_print_plant(plant)
+        else:
+            print("Invalid command")
 
 if __name__ == "__main__":
     main()
